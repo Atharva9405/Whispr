@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import fileUpload from "express-fileupload";
 import cors from "cors";
+import createHttpError, { CreateHttpError } from "http-errors";
 
 dotenv.config();
 
@@ -28,5 +29,19 @@ app.use(
   })
 );
 app.use(cors());
+
+app.use(async (res, res, next) => {
+  next(createHttpError.NotFound("This route does not exist"));
+});
+
+app.use(async (err, req, res, next) => {
+  res.status(err.status || 500);
+  res.send({
+    error: {
+      status: err.status || 500,
+      message: err.message,
+    },
+  });
+});
 
 export default app;
